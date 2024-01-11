@@ -18,8 +18,12 @@ import { InputSchema } from "@/lib/validators";
 import { Badge } from "../ui/badge";
 import { X } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import { CreateCard } from "@/actions/CreatePost.action";
+import { useTransition } from "react";
+import { toast } from "sonner";
 
 export const CreateForm = () => {
+  const [isPending, startTransition] = useTransition();
   // 1. Define your form.
   const form = useForm<z.infer<typeof InputSchema>>({
     resolver: zodResolver(InputSchema),
@@ -36,10 +40,18 @@ export const CreateForm = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof InputSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof InputSchema>) {
+    startTransition(() => {
+      CreateCard(values).then((data) => {
+        if (data?.error) {
+          toast.error(data.error);
+        }
+        if (data?.success) {
+          toast.success(data.success);
+        }
+      });
+      form.reset();
+    });
   }
 
   const handleInputKeyDown = (
@@ -220,7 +232,9 @@ export const CreateForm = () => {
             )}
           />
         </div>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "Submitting..." : "Submit"}
+        </Button>
       </form>
     </Form>
   );

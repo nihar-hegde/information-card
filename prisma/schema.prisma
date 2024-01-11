@@ -9,3 +9,15 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model InfoCard {
+  id           String   @id @default(cuid())
+  imageUrl     String?
+  name         String
+  description  String
+  interests    String[]
+  githubUrl    String?
+  twitterUrl   String?
+  instagramUrl String?
+  linkedinUrl  String?
+}
