@@ -21,8 +21,10 @@ import { Textarea } from "../ui/textarea";
 import { CreateCard } from "@/actions/CreatePost.action";
 import { useTransition } from "react";
 import { toast } from "sonner";
+import { usePathname, useRouter } from "next/navigation";
 
 export const CreateForm = () => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   // 1. Define your form.
   const form = useForm<z.infer<typeof InputSchema>>({
@@ -51,6 +53,7 @@ export const CreateForm = () => {
         }
       });
       form.reset();
+      router.push("/dashboard");
     });
   }
 

@@ -1,6 +1,8 @@
 "use server";
 import { db } from "@/lib/db";
 import { InputSchema } from "@/lib/validators";
+import { Divide } from "lucide-react";
+import { revalidatePath } from "next/cache";
 import z from "zod";
 
 export const CreateCard = async (values: z.infer<typeof InputSchema>) => {
@@ -31,8 +33,18 @@ export const CreateCard = async (values: z.infer<typeof InputSchema>) => {
         linkedinUrl,
       },
     });
+    revalidatePath("/dashboard");
     return { success: "Card Created Succesfully" };
   } catch (error) {
-    console.log(error);
+    return { error: "Unable to create card!!!" };
+  }
+};
+
+export const getAllCardInfoDetails = async () => {
+  try {
+    const data = await db.infoCard.findMany({});
+    return data;
+  } catch (error) {
+    return { error: "Unable to retrive Card Data!!!" };
   }
 };
